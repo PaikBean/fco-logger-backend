@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: api-key
   application:
     name: fconline-logger-man
   datasource:
