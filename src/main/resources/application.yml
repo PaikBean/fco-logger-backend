@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: fconline-logger-man
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fconline_logger
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
