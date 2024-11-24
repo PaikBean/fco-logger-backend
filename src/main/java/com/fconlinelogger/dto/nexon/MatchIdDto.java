@@ -1,4 +1,4 @@
-package com.fconlinelogger.dto;
+package com.fconlinelogger.dto.nexon;
 
 import lombok.Builder;
 import lombok.Getter;

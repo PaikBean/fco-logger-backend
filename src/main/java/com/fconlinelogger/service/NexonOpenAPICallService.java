@@ -1,6 +1,6 @@
 package com.fconlinelogger.service;
 
-import com.fconlinelogger.dto.*;
+import com.fconlinelogger.dto.nexon.*;
 import com.fconlinelogger.exception.NexonApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +70,7 @@ public class NexonOpenAPICallService {
      * @param ouid 계정식별자
      * @return
      */
-    public UserBasicInfoDto searchUserBasicInfo(String ouid) {
+    public UserBasicDto searchUserBasicInfo(String ouid) {
         try {
             return webClientBuilder
                     .baseUrl(baseUrl)
@@ -93,7 +93,7 @@ public class NexonOpenAPICallService {
                                     .handle((error, sink) ->
                                         sink.error(new NexonApiException(error.getError().getName(), error.getError().getMessage()))
                                     ))
-                    .bodyToMono(UserBasicInfoDto.class)
+                    .bodyToMono(UserBasicDto.class)
                     .block();
 
         } catch (NexonApiException e) {

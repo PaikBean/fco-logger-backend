@@ -1,12 +1,11 @@
 package com.fconlinelogger.service;
 
 import com.fconlinelogger.domain.FCOUser;
-import com.fconlinelogger.dto.MatchType;
-import com.fconlinelogger.dto.UserBasicInfoDto;
+import com.fconlinelogger.dto.nexon.MatchType;
+import com.fconlinelogger.dto.nexon.UserBasicDto;
 import com.fconlinelogger.dto.UserDto;
-import com.fconlinelogger.dto.UserOuidDto;
+import com.fconlinelogger.dto.nexon.UserOuidDto;
 import com.fconlinelogger.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,7 @@ public class UserService {
     @Transactional
     public void createUser(String nickName){
         UserOuidDto userOuid = nexonOpenAPICallService.searchUserName(nickName);
-        UserBasicInfoDto userInfo = nexonOpenAPICallService.searchUserBasicInfo(userOuid.getOuid());
+        UserBasicDto userInfo = nexonOpenAPICallService.searchUserBasicInfo(userOuid.getOuid());
 
         userRepository.save(
                 FCOUser.builder()

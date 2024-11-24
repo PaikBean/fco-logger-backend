@@ -4,7 +4,6 @@ import com.fconlinelogger.dto.CustomResponse;
 import com.fconlinelogger.dto.UserDto;
 import com.fconlinelogger.exception.NexonApiException;
 import com.fconlinelogger.service.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
