@@ -21,4 +21,13 @@ public enum MatchResult {
         }
         throw new IllegalArgumentException("Invalid MatchResult code: " + code);
     }
+
+    public static MatchResult fromDescription(String description) {
+        for (MatchResult result : MatchResult.values()) {
+            if (result.description.equalsIgnoreCase(description)) {
+                return result;
+            }
+        }
+        throw new IllegalArgumentException("Invalid MatchResult description: " + description);
+    }
 }
