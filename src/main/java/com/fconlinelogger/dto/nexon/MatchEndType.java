@@ -3,21 +3,19 @@ package com.fconlinelogger.dto.nexon;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Objects;
-
 @Getter
 @RequiredArgsConstructor
 public enum MatchEndType {
-    NORMAL_END("0", "정상 종료"),
-    WIN_BY_FORFEIT("1", "몰수승"),
-    LOSE_BY_FORFEIT("2", "몰수패");
+    NORMAL_END(0, "정상 종료"),
+    WIN_BY_FORFEIT(1, "몰수승"),
+    LOSE_BY_FORFEIT(2, "몰수패");
 
-    private final String code;
+    private final int code;
     private final String description;
 
-    public static MatchEndType fromCode(String code) {
+    public static MatchEndType fromCode(int code) {
         for (MatchEndType type : MatchEndType.values()) {
-            if (Objects.equals(type.code, code)) {
+            if (type.code == code) {
                 return type;
             }
         }
