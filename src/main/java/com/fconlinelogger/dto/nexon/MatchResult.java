@@ -6,9 +6,19 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum MatchResult {
-    WIN("승"),
-    DRAW("무"),
-    LOSE("패");
+    WIN("W", "승"),      // W: Win
+    DRAW("D", "무"),     // D: Draw
+    LOSE("L", "패");     // L: Lose
 
-    private final String koreanLabel;
+    private final String code;         // 결과 코드 (W/D/L)
+    private final String description;  // 한글 설명
+
+    public static MatchResult fromCode(String code) {
+        for (MatchResult result : MatchResult.values()) {
+            if (result.code.equalsIgnoreCase(code)) {
+                return result;
+            }
+        }
+        throw new IllegalArgumentException("Invalid MatchResult code: " + code);
+    }
 }
