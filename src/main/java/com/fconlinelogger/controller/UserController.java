@@ -28,6 +28,7 @@ public class UserController {
             UserDto userDto = Optional.ofNullable(userService.searchUser(nickName.toLowerCase()))
                     .orElseGet(() -> {
                         userService.createUser(nickName.toLowerCase());
+                        userService.createMatchSummary(nickName.toLowerCase());
                         return userService.searchUser(nickName.toLowerCase());
                     });
 

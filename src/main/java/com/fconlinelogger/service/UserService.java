@@ -1,20 +1,25 @@
 package com.fconlinelogger.service;
 
 import com.fconlinelogger.domain.FCOUser;
+import com.fconlinelogger.domain.MatchSummary;
 import com.fconlinelogger.dto.MatchSummaryDto;
+import com.fconlinelogger.dto.nexon.MatchEndType;
+import com.fconlinelogger.dto.nexon.MatchResult;
 import com.fconlinelogger.dto.nexon.MatchType;
 import com.fconlinelogger.dto.nexon.match.MatchDto;
-import com.fconlinelogger.dto.nexon.match.MatchInfoDto;
 import com.fconlinelogger.dto.nexon.user.MatchIdDto;
 import com.fconlinelogger.dto.nexon.user.UserBasicDto;
 import com.fconlinelogger.dto.UserDto;
 import com.fconlinelogger.dto.nexon.user.UserOuidDto;
+import com.fconlinelogger.repository.MatchSummaryRepository;
 import com.fconlinelogger.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +30,7 @@ public class UserService {
 
     private final NexonOpenAPICallService nexonOpenAPICallService;
     private final UserRepository userRepository;
+    private final MatchSummaryRepository matchSummaryRepository;
 
     public UserDto searchUser(String nickName) {
 
@@ -34,29 +40,7 @@ public class UserService {
 
         FCOUser user = userRepository.findByNickname(nickName);
 
-        List<MatchIdDto> matchIdDtos = nexonOpenAPICallService.searchUserMatchList(user.getOuid(), MatchType.OFFICIAL_MATCH, 0, 10);
-
-        for(MatchIdDto matchIdDto : matchIdDtos){
-            nexonOpenAPICallService.searchMatchDetail(matchIdDto.getMatchId());
-        }
-
         List<MatchSummaryDto> matchSummaryDtoList = new ArrayList<>();
-
-        for(MatchIdDto matchIdDto : matchIdDtos){
-            MatchDto matchDto = nexonOpenAPICallService.searchMatchDetail(matchIdDto.getMatchId());
-            int myInfo = matchDto.getMatchInfo().getFirst().getNickname().toLowerCase().equals(nickName) ? 0 : 1;
-            int opponentInfo = matchDto.getMatchInfo().getFirst().getNickname().toLowerCase().equals(nickName) ? 1 : 0;
-
-            matchSummaryDtoList.add(MatchSummaryDto.builder()
-                            .matchId(matchIdDto.getMatchId())
-                            .matchTime(matchDto.getMatchDate())
-                            .opponentNickname(matchDto.getMatchInfo().get(opponentInfo).getNickname())
-                            .matchResult(matchDto.getMatchInfo().get(myInfo).getMatchDetail().getMatchResult())
-                            .myGoal(matchDto.getMatchInfo().get(myInfo).getShoot().getGoalTotal())
-                            .opponentGoal(matchDto.getMatchInfo().get(opponentInfo).getShoot().getGoalTotal())
-                            .matchType(MatchType.fromCode(matchDto.getMatchType()).getDescription())
-                    .build());
-        }
 
         return UserDto.builder()
                 .nickname(user.getNickname())
@@ -78,5 +62,34 @@ public class UserService {
                         .level(userInfo.getLevel())
                         .build()
         );
+    }
+
+    @Transactional
+    public void createMatchSummary(String nickname){
+        FCOUser user = userRepository.findByNickname(nickname);
+        List<MatchIdDto> matchIdDtoList = nexonOpenAPICallService.searchUserMatchList(user.getOuid(), MatchType.OFFICIAL_MATCH, 0, 10);
+
+        for(MatchIdDto matchIdDto : matchIdDtoList){
+            nexonOpenAPICallService.searchMatchDetail(matchIdDto.getMatchId());
+        }
+
+        for(MatchIdDto matchIdDto : matchIdDtoList){
+            MatchDto matchDto = nexonOpenAPICallService.searchMatchDetail(matchIdDto.getMatchId());
+            int myInfo = matchDto.getMatchInfo().getFirst().getNickname().toLowerCase().equals(user.getNickname()) ? 0 : 1;
+            int opponentInfo = myInfo == 0 ? 1 : 0;
+
+            matchSummaryRepository.save(MatchSummary.builder()
+                    .matchId(matchIdDto.getMatchId())
+                            .user(user)
+                            .matchResult(MatchResult.fromDescription(matchDto.getMatchInfo().get(myInfo).getMatchDetail().getMatchResult()))
+                            .matchEndType(MatchEndType.fromCode(matchDto.getMatchInfo().get(myInfo).getMatchDetail().getMatchEndType()))
+                            .myGoal(matchDto.getMatchInfo().get(myInfo).getShoot().getGoalTotal())
+                            .opponentGoal(matchDto.getMatchInfo().get(opponentInfo).getShoot().getGoalTotal())
+                            .opponentNickname(matchDto.getMatchInfo().get(opponentInfo).getNickname())
+                            .matchType(MatchType.fromCode(matchDto.getMatchType()))
+                            .matchDate(LocalDateTime.parse(matchDto.getMatchDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                    .build()
+            );
+        }
     }
 }
