@@ -21,7 +21,7 @@ public class FCOUser {
     private String nickname; // 닉네임
 
     @Column(name = "level", nullable = false)
-    private Integer level; // 레벨
+    private int level; // 레벨
 
     @Column(name = "last_modified", nullable = false)
     private LocalDateTime lastModified; // 최종 갱신일
