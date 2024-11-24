@@ -1,6 +1,6 @@
 package com.fconlinelogger.dto;
 
-import com.fconlinelogger.dto.nexon.MatchIdDto;
+import com.fconlinelogger.dto.nexon.user.MatchIdDto;
 import lombok.Builder;
 import lombok.Getter;
 

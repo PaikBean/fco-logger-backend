@@ -2,14 +2,17 @@ package com.fconlinelogger.service;
 
 import com.fconlinelogger.domain.FCOUser;
 import com.fconlinelogger.dto.nexon.MatchType;
-import com.fconlinelogger.dto.nexon.UserBasicDto;
+import com.fconlinelogger.dto.nexon.user.MatchIdDto;
+import com.fconlinelogger.dto.nexon.user.UserBasicDto;
 import com.fconlinelogger.dto.UserDto;
-import com.fconlinelogger.dto.nexon.UserOuidDto;
+import com.fconlinelogger.dto.nexon.user.UserOuidDto;
 import com.fconlinelogger.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -26,6 +29,12 @@ public class UserService {
         }
 
         FCOUser user = userRepository.findByNickname(nickName);
+
+        List<MatchIdDto> matchIdDtos = nexonOpenAPICallService.searchUserMatchList(user.getOuid(), MatchType.OFFICIAL_MATCH, 0, 10);
+
+        for(MatchIdDto matchIdDto : matchIdDtos){
+            nexonOpenAPICallService.searchMatchDetail(matchIdDto.getMatchId());
+        }
 
         return UserDto.builder()
                 .nickname(user.getNickname())

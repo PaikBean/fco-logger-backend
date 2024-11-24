@@ -1,6 +1,10 @@
 package com.fconlinelogger.service;
 
 import com.fconlinelogger.dto.nexon.*;
+import com.fconlinelogger.dto.nexon.match.MatchDto;
+import com.fconlinelogger.dto.nexon.user.MatchIdDto;
+import com.fconlinelogger.dto.nexon.user.UserBasicDto;
+import com.fconlinelogger.dto.nexon.user.UserOuidDto;
 import com.fconlinelogger.exception.NexonApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -157,4 +161,46 @@ public class NexonOpenAPICallService {
             throw new RuntimeException("API 호출 중 오류 발생", e);
         }
     }
+
+    /**
+     * 매치 고유 식별자{matchid}로 매치의 상세 정보를 조회합니다.
+     *
+     * @param matchid 매치 고유 식별자
+     * @return
+     */
+    public MatchDto searchMatchDetail(String matchid) {
+        try {
+            return webClientBuilder
+                    .baseUrl(baseUrl)
+                    .build()
+                    .get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/fconline/v1/match-detail")
+                            .queryParam("matchid", matchid)
+                            .build())
+                    .header("accept", "application/json")
+                    .header("x-nxopen-api-key", apiKey)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is4xxClientError, clientResponse ->
+                            clientResponse.bodyToMono(NexonErrorResponse.class)
+                                    .handle((error, sink) ->
+                                            sink.error(new NexonApiException(error.getError().getName(), error.getError().getMessage()))
+                                    ))
+                    .onStatus(HttpStatusCode::is5xxServerError, clientResponse ->
+                            clientResponse.bodyToMono(NexonErrorResponse.class)
+                                    .handle((error, sink) ->
+                                            sink.error(new NexonApiException(error.getError().getName(), error.getError().getMessage()))
+                                    ))
+                    .bodyToMono(MatchDto.class)
+                    .block();
+
+        } catch (NexonApiException e) {
+            log.error("Nexon API Error: {}", e.getMessage(), e);
+            throw new NexonApiException("API 호출 중 오류 발생", e.getMessage());
+        } catch (Exception e) {
+            log.error("Nexon API 호출 중 예기치 않은 오류 발생: {}", e.getMessage(), e);
+            throw new RuntimeException("API 호출 중 오류 발생", e);
+        }
+    }
+
 }
