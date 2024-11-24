@@ -1,11 +1,9 @@
-package com.fconlinelogger.dto.nexon;
+package com.fconlinelogger.dto.nexon.user;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class MatchIdDto {
     private String matchId; // 매치 고유 식별자

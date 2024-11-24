@@ -1,10 +1,8 @@
-package com.fconlinelogger.dto.nexon;
+package com.fconlinelogger.dto.nexon.user;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class UserBasicDto {
     private String id;
     private String nickname;
