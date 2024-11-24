@@ -14,5 +14,5 @@ public class UserDto {
     private int level;
     private LocalDateTime lastModified;
 
-    private List<MatchIdDto> matchIdDtoList;
+    private List<MatchSummaryDto> matchSummaryDtoList;
 }

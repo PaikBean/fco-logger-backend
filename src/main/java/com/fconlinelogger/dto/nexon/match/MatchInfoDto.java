@@ -1,11 +1,13 @@
 package com.fconlinelogger.dto.nexon.match;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
+@Builder
 public class MatchInfoDto {
     private String ouid;        // 계정 식별자
     private String nickname;    // 닉네임
