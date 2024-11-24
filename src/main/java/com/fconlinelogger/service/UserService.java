@@ -1,6 +1,7 @@
 package com.fconlinelogger.service;
 
 import com.fconlinelogger.domain.FCOUser;
+import com.fconlinelogger.dto.MatchType;
 import com.fconlinelogger.dto.UserBasicInfoDto;
 import com.fconlinelogger.dto.UserDto;
 import com.fconlinelogger.dto.UserOuidDto;
@@ -31,6 +32,7 @@ public class UserService {
                 .nickname(user.getNickname())
                 .level(user.getLevel())
                 .lastModified(user.getLastModified())
+                .matchIdDtoList(nexonOpenAPICallService.searchUserMatchList(user.getOuid(), MatchType.OFFICIAL_MATCH, 0, 10))
                 .build();
     }
 
