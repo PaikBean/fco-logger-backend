@@ -42,7 +42,23 @@ public class UserService {
 
         List<MatchSummaryDto> matchSummaryDtoList = new ArrayList<>();
 
+        for (MatchSummary matchSummary : matchSummaryRepository.findAllByUser(user)) {
+            matchSummaryDtoList.add(
+                    MatchSummaryDto.builder()
+                            .matchId(matchSummary.getMatchId())
+                            .matchResult(matchSummary.getMatchResult().getDescription())
+                            .myGoal(matchSummary.getMyGoal())
+                            .opponentGoal(matchSummary.getOpponentGoal())
+                            .opponentNickname(matchSummary.getOpponentNickname())
+                            .matchType(matchSummary.getMatchType().getDescription())
+                            .matchTime(matchSummary.getMatchDate())
+                            .build()
+            );
+        }
+
+
         return UserDto.builder()
+                .ouid(user.getOuid())
                 .nickname(user.getNickname())
                 .level(user.getLevel())
                 .lastModified(user.getLastModified())
